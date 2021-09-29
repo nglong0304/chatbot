@@ -1,42 +1,37 @@
+#docs https://chatterbot.readthedocs.io/en/stable/setup.html
 from chatterbot import ChatBot
 from chatterbot.trainers import ListTrainer
+import csv
 
-#docs https://chatterbot.readthedocs.io/en/stable/setup.html
+file = open("covid_data.csv")
+csvreader = csv.reader(file)
+header = next(csvreader)
+
+rows = []
+for row in csvreader:
+    rows.append(row)
+
+ans = []
+for row in rows:
+    ans.append(f"Location: {row[0]}, Cases: {row[1]}, Deaths: {row[2]}, Recoveries: {row[3]}" )
 
 #read_only: = true : disable the bot ability to learn in the actual conversation
-
 my_bot = ChatBot(
     'LongPro',
-    read_only=True,
+    read_only=True, 
     logic_adapters=[
-        'chatterbot.logic.MathematicalEvaluation',
         'chatterbot.logic.BestMatch'
     ])
 
-small_talk = ['hi there!',
-              'hi!',
-              'how do you do?',
-              'how are you?',
-              'i\'m cool.',
-              'fine, you?',
-              'always cool.',
-              'i\'m ok',
-              'glad to hear that.',
-              'i\'m fine',
-              'glad to hear that.',
-              'i feel awesome',
-              'excellent, glad to hear that.',
-              'not so good',
-              'sorry to hear that.',
-              'what\'s your name?',
-              'i\'m pybot. ask me a math question, please.']
-
-math_talk_1 = ['pythagorean theorem',
-               'a squared plus b squared equals c squared.']
-math_talk_2 = ['law of cosines',
-               'c**2 = a**2 + b**2 - 2 * a * b * cos(gamma)']
+data_to_train=[]
+for count,row in enumerate(rows) :
+    data_to_train.append(f"Covid situation in the {row[0]}?")
+    data_to_train.append(ans[count])
 
 list_trainer = ListTrainer(my_bot)
 
-for item in (small_talk, math_talk_1, math_talk_2):
-    list_trainer.train(item)
+# print(data_to_train)
+list_trainer.train(data_to_train)
+
+#close .csv file
+file.close()
