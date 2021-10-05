@@ -30,7 +30,6 @@ for count,row in enumerate(rows) :
 
 list_trainer = ListTrainer(my_bot)
 
-# print(data_to_train)
 list_trainer.train(data_to_train)
 
 #close .csv file
